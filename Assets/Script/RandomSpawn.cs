@@ -52,11 +52,11 @@ public class RandomSpawn : MonoBehaviour
     }
 
     private void CreateRandomSphere(){
-        float range_X = UnityEngine.Random.Range((width / 2) * -1, width / 2);
-        float range_Y = UnityEngine.Random.Range((height / 2) * -1, height / 2);
-        //float range_X = UnityEngine.Random.Range((frustumWidth / 2) * -1, frustumWidth / 2);
-        //float exceptiveArea = mainCamera.ScreenToWorldPoint(new Vector3(0, 1000, 0)).y;
-        //float range_Y = UnityEngine.Random.Range((frustumHeight / 2) * -1, (frustumHeight / 2) - exceptiveArea);
+        //float range_X = UnityEngine.Random.Range((width / 2) * -1, width / 2);
+        //float range_Y = UnityEngine.Random.Range((height / 2) * -1, height / 2);
+        float range_X = UnityEngine.Random.Range((frustumWidth / 2) * -1, frustumWidth / 2);
+        float exceptiveArea = mainCamera.ScreenToWorldPoint(new Vector3(0, 1000, 0)).y;
+        float range_Y = UnityEngine.Random.Range((frustumHeight / 2) * -1, (frustumHeight / 2) - exceptiveArea);
         float range_Z = UnityEngine.Random.Range(min_Z, max_Z);
         Vector3 randomPosition = new Vector3(range_X, range_Y, range_Z);
         Vector3 createPosition = originPosition + randomPosition;
