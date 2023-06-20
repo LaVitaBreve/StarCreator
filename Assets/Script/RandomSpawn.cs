@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 public class RandomSpawn : MonoBehaviour
 {
     public Camera mainCamera;
     public GameObject spherePrefab;
+    public TMP_Text numPrefab;
     public InputField amountInput;
     public InputField maxSizeInput;
+    public LineRenderer lineRenderer;
 
 
 
@@ -24,6 +27,7 @@ public class RandomSpawn : MonoBehaviour
     private float frustumHeight;
     private Vector3 originPosition;
     private List<GameObject> sphereList = new List<GameObject>();
+    private List<TMP_Text> numberList = new List<TMP_Text>();
     // Start is called before the first frame update
     void Start()
     {
@@ -32,6 +36,13 @@ public class RandomSpawn : MonoBehaviour
         frustumHeight = (float)(2.0 * min_Z * Math.Tan(mainCamera.fieldOfView * 0.5 * Mathf.Deg2Rad));
         frustumWidth = (float)(frustumHeight * mainCamera.aspect);
         originPosition = mainCamera.transform.position;
+
+        // Line Renderer
+        lineRenderer = lineRenderer.GetComponent<LineRenderer>();
+        lineRenderer.enabled = false;
+        lineRenderer.material.color = Color.yellow;
+        lineRenderer.startWidth = 10f;
+        lineRenderer.endWidth = 10f;
     }
 
     // Update is called once per frame
@@ -41,27 +52,43 @@ public class RandomSpawn : MonoBehaviour
     }
 
     private void CreateRandomSphere(){
-        // float range_X = UnityEngine.Random.Range((width / 2) * -1, width / 2);
-        // float range_Y = UnityEngine.Random.Range((height / 2) * -1, height / 2);
-        float range_X = UnityEngine.Random.Range((frustumWidth / 2) * -1, frustumWidth / 2);
-        float exceptiveArea = mainCamera.ScreenToWorldPoint(new Vector3(0, 0, Screen.height - 188)).z;
-        float range_Y = UnityEngine.Random.Range((frustumHeight / 2) * -1, (frustumHeight / 2) - exceptiveArea);
+        float range_X = UnityEngine.Random.Range((width / 2) * -1, width / 2);
+        float range_Y = UnityEngine.Random.Range((height / 2) * -1, height / 2);
+        //float range_X = UnityEngine.Random.Range((frustumWidth / 2) * -1, frustumWidth / 2);
+        //float exceptiveArea = mainCamera.ScreenToWorldPoint(new Vector3(0, 1000, 0)).y;
+        //float range_Y = UnityEngine.Random.Range((frustumHeight / 2) * -1, (frustumHeight / 2) - exceptiveArea);
         float range_Z = UnityEngine.Random.Range(min_Z, max_Z);
         Vector3 randomPosition = new Vector3(range_X, range_Y, range_Z);
         Vector3 createPosition = originPosition + randomPosition;
+        Vector3 numberTextPosition = createPosition + new Vector3(0, 5, 0);
 
         float randomSize = UnityEngine.Random.Range(minSize, maxSize);
         Vector3 randomScale = new Vector3(randomSize, randomSize, randomSize);
          
         GameObject instantSphere = Instantiate(spherePrefab, createPosition, Quaternion.identity);
         instantSphere.transform.localScale = randomScale;
-
         sphereList.Add(instantSphere);
+
+        TMP_Text instantTextMesh = Instantiate(numPrefab, numberTextPosition, Quaternion.identity);
+        instantTextMesh.text = $"# {sphereList.Count}";
+        numberList.Add(instantTextMesh);
+
+        CreateConstellationLine();
+    }
+
+    private void CreateConstellationLine(){
+        if (sphereList.Count > 0){
+            lineRenderer.enabled = true;
+            lineRenderer.positionCount = sphereList.Count;
+
+            int currentIndex = sphereList.Count - 1;
+            Vector3 currentPosition = sphereList[currentIndex].GetComponent<Transform>().position;
+
+            lineRenderer.SetPosition(currentIndex, currentPosition);
+        }
     }
 
     public void CreateButton_OnClick(){
-        Debug.Log("Create Button Click !!!!!!!!!!!!!!");
-
         amount = int.Parse(amountInput.text);
         maxSize = float.Parse(maxSizeInput.text);
 
@@ -71,11 +98,17 @@ public class RandomSpawn : MonoBehaviour
     }
 
     public void DeleteButton_OnClick(){
-        Debug.Log("Delete Button Click !!!!!!!!!!!!!!");
         foreach(var shpere in sphereList){
             Destroy(shpere);
         }
         
+        foreach(var text in numberList){
+            Destroy(text.gameObject);
+        }
+        
         sphereList.Clear();
+        numberList.Clear();
+
+        lineRenderer.enabled = false;
     }
 }
