@@ -41,8 +41,8 @@ public class RandomSpawn : MonoBehaviour
         lineRenderer = lineRenderer.GetComponent<LineRenderer>();
         lineRenderer.enabled = false;
         lineRenderer.material.color = Color.yellow;
-        lineRenderer.startWidth = 10f;
-        lineRenderer.endWidth = 10f;
+        lineRenderer.startWidth = 7f;
+        lineRenderer.endWidth = 7f;
     }
 
     // Update is called once per frame
