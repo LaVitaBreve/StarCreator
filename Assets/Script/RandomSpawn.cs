@@ -13,6 +13,7 @@ public class RandomSpawn : MonoBehaviour
     public InputField amountInput;
     public InputField maxSizeInput;
     public LineRenderer lineRenderer;
+    public GameObject starsObject;
 
 
 
@@ -46,9 +47,10 @@ public class RandomSpawn : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-
+    private void LateUpdate() {
+        foreach(var item in numberList){
+            item.transform.LookAt(mainCamera.transform);
+        }
     }
 
     private void CreateRandomSphere(){
@@ -67,10 +69,13 @@ public class RandomSpawn : MonoBehaviour
          
         GameObject instantSphere = Instantiate(spherePrefab, createPosition, Quaternion.identity);
         instantSphere.transform.localScale = randomScale;
+        instantSphere.transform.SetParent(starsObject.transform);
         sphereList.Add(instantSphere);
 
         TMP_Text instantTextMesh = Instantiate(numPrefab, numberTextPosition, Quaternion.identity);
         instantTextMesh.text = $"# {sphereList.Count}";
+        instantTextMesh.transform.localScale = new Vector3(-1, 1, 1);
+        instantTextMesh.transform.SetParent(starsObject.transform);
         numberList.Add(instantTextMesh);
 
         CreateConstellationLine();
